@@ -32,7 +32,7 @@ class LLMScenarioGenerator:
             input=prompt
         )
 
-        text = response.output[0].content[0].text
+        text = response.output[0].content[0].text # type: ignore
 
         try:
             scenario = json.loads(text)

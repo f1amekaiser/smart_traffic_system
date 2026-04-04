@@ -203,7 +203,6 @@ class SumoTrafficService:
                     continue
                 try:
                     traci.vehicle.add(veh_id, route_id)
-                    # User-injected vehicles get a bright distinctive color.
                     traci.vehicle.setColor(veh_id, (245, 245, 245))
                     traci.vehicle.setMaxSpeed(veh_id, 6)
                     traci.vehicle.setSpeed(veh_id, 5)

@@ -384,9 +384,7 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ direction, count: injectCount }),
       });
-    } catch {
-      // Keep optimistic local feedback on request failure.
-    }
+    } catch {}
   };
 
   return (
