@@ -5,3 +5,5 @@ joblib
 scikit-learn
 numpy
 openai
+flask
+flask-sock

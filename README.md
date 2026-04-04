@@ -1,6 +1,6 @@
 # Smart Traffic Signal System
 
-An intelligent traffic signal control system that uses a machine learning model to dynamically optimize signal phases based on real-time traffic conditions simulated in SUMO.
+An intelligent traffic signal control system that uses a machine learning model to dynamically optimize signal phases based on real-time traffic conditions simulated in SUMO, with a React + Canvas frontend synchronized through WebSocket events.
 
 ## Overview
 
@@ -9,6 +9,8 @@ This project integrates:
 - SUMO for traffic simulation
 - A Random Forest model for signal decision-making
 - LLM-based traffic scenario generation
+- Flask API for control and WebSocket synchronization (`/inject`, `/ws`)
+- React + HTML5 Canvas visualization frontend
 - Logging for system behavior analysis
 
 The system continuously monitors traffic metrics such as queue length, waiting time, and vehicle count, and adjusts signal timing accordingly.
@@ -33,8 +35,13 @@ SMART_TRAFFIC_SYSTEM/
 |-- first.rou.xml             # Route definitions
 |-- first.sumocfg             # SUMO configuration
 |
+|-- frontend/                 # React + Canvas event-driven frontend
+|   |-- src/
+|   |-- package.json
+|   `-- vite.config.js
+|
 |-- llm_gen.py                # LLM-based traffic scenario generator
-|-- main.py                   # Main simulation + control loop
+|-- main.py                   # SUMO loop + Flask API server
 |-- requirements.txt
 `-- .env.example
 ```
@@ -47,6 +54,13 @@ Install all required packages:
 
 ```bash
 pip install -r requirements.txt
+```
+
+### Frontend Dependencies
+
+```bash
+cd frontend
+npm install
 ```
 
 ### SUMO Installation
@@ -84,16 +98,63 @@ OPENAI_API_KEY=your_api_key_here
 python model/train_model.py
 ```
 
-### Step 2: Run Simulation
+### Step 2: Run SUMO + Backend API
 
 ```bash
 python main.py
 ```
 
+The backend server starts on `http://127.0.0.1:8000`.
+
+### Step 3: Run Frontend
+
+In a second terminal:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open the printed Vite URL (typically `http://127.0.0.1:5173`).
+
+## Backend Data Contract
+
+WebSocket stream (`/ws`) emits every ~250ms:
+
+```json
+{
+  "vehicles": [
+    {
+      "id": "car_120_8372",
+      "x": 442.8,
+      "y": 211.5,
+      "speed": 4.25,
+      "direction": "N"
+    }
+  ],
+  "phase": "NS",
+  "current_step": 64,
+  "last_switch_step": 42
+}
+```
+
+Vehicle list is capped to a small subset for performance.
+
+`POST /inject` accepts:
+
+```json
+{
+  "direction": "N",
+  "count": 3
+}
+```
+
+Direction must be one of `N`, `S`, `E`, `W`.
+
 ## Execution Flow
 
 1. Traffic scenario is generated using the LLM.
-2. Vehicles are spawned in SUMO based on scenario parameters.
+2. Vehicles are spawned in SUMO based on scenario parameters and user injections.
 3. Traffic data is collected at each simulation step:
    - Queue length
    - Waiting time
@@ -101,10 +162,14 @@ python main.py
    - Average speed
 4. Features are passed to the trained Random Forest model.
 5. Model predicts the optimal signal phase.
-6. Signal is updated accordingly.
-7. Decisions are:
-   - Printed in the console
-   - Logged in `reports/report.txt`
+6. Backend updates the phase deterministically and records `last_switch_step`.
+7. Backend emits compact vehicle + signal snapshots on `/ws` every ~250ms.
+8. Frontend keeps a ref-based vehicle map and interpolates position/speed updates smoothly.
+9. Frontend vehicles obey local stop-line rules (red stop, green resume), independent of network jitter.
+10. Decisions are:
+
+- Printed in the console
+- Logged in `reports/report.txt`
 
 ## Sample Log Output
 
@@ -119,12 +184,12 @@ STEP 78 | EW GREEN | NS_Q=3, EW_Q=15 | NS_W=8.4, EW_W=40.7
 - The trained model must exist in the `model/` directory.
 - Logs are cleared automatically at the start of each run.
 - The system is designed for a four-way junction simulation.
+- Frontend sync is event-based and timestamp-driven, not per-vehicle backend tracking.
 
 ## Future Improvements
 
 - Multi-junction traffic control
 - Real-world map integration using OpenStreetMap
-- Frontend visualization dashboard
 - Performance comparison with baseline strategies
 - Advanced traffic pattern modeling
 

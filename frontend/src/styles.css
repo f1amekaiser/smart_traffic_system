@@ -1,0 +1,195 @@
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=Sora:wght@400;600;700&display=swap");
+
+:root {
+  --bg-deep: #0b132b;
+  --bg-mid: #1c2541;
+  --panel: rgba(20, 24, 38, 0.85);
+  --ink: #ecf2ff;
+  --subtle: #a7b0c0;
+  --accent: #ffd166;
+  --ok: #2ec4b6;
+  --warn: #ef476f;
+  --border: rgba(255, 255, 255, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Sora", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(46, 196, 182, 0.25),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 82% 14%,
+      rgba(255, 209, 102, 0.22),
+      transparent 34%
+    ),
+    linear-gradient(140deg, var(--bg-deep), var(--bg-mid));
+}
+
+.app-shell {
+  width: min(1400px, 96vw);
+  margin: 18px auto;
+  padding: 14px;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+h1,
+h2 {
+  font-family: "Chakra Petch", sans-serif;
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+h1 {
+  font-size: clamp(1.2rem, 2vw, 2rem);
+}
+
+h2 {
+  font-size: 1.08rem;
+  margin-bottom: 10px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr 260px;
+  gap: 14px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  backdrop-filter: blur(6px);
+  padding: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.canvas-wrap {
+  padding: 10px;
+}
+
+canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.status-pill {
+  font-weight: 700;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+}
+
+.status-pill.online {
+  color: #062920;
+  background: var(--ok);
+}
+
+.status-pill.offline {
+  color: #2d0f14;
+  background: var(--warn);
+}
+
+.controls label {
+  color: var(--subtle);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.controls input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.btn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+button {
+  background: linear-gradient(140deg, #ffd166, #ff9f1c);
+  color: #1d1d1d;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 10px;
+  font-family: "Chakra Petch", sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    filter 0.18s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.stats p {
+  margin: 8px 0;
+  color: var(--subtle);
+}
+
+.stats strong {
+  color: var(--ink);
+}
+
+.phase-indicator {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.phase-indicator span {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 7px 10px;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.phase-indicator .active {
+  background: rgba(46, 196, 182, 0.2);
+  color: #85f0de;
+}
+
+.phase-indicator .idle {
+  background: rgba(255, 255, 255, 0.04);
+  color: #8a92a3;
+}
+
+@media (max-width: 1200px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    order: 2;
+  }
+
+  .canvas-wrap {
+    order: 1;
+  }
+}
