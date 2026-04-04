@@ -2,3 +2,5 @@
 *.pkl
 __pycache__/
 reports/
+node_modules/
+dist/
