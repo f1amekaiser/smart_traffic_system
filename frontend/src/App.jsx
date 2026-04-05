@@ -13,6 +13,9 @@ const WS_URL =
 
 const MAX_TRACKED_VEHICLES = 40;
 const MAX_RENDERED_VEHICLES = 30;
+const VEHICLE_LENGTH = 24;
+const VEHICLE_WIDTH = 14;
+const SPAWN_STACK_GAP = 26;
 
 const SIGNAL = {
   NS_GREEN: "NS_GREEN",
@@ -214,8 +217,8 @@ export default function App() {
             speed: incoming.speed,
             targetSpeed: incoming.speed,
             direction: incoming.direction || "N",
-            length: 17,
-            width: 10,
+            length: VEHICLE_LENGTH,
+            width: VEHICLE_WIDTH,
             localState: "moving",
             lastSeen: now,
             ghost: false,
@@ -349,7 +352,7 @@ export default function App() {
     for (let i = 0; i < count; i += 1) {
       const id = `ghost_${direction}_${now}_${i}`;
       const pos = getSpawnPoint(direction, geometry);
-      const offset = i * 18;
+      const offset = i * SPAWN_STACK_GAP;
       if (direction === "N") pos.y -= offset;
       if (direction === "S") pos.y += offset;
       if (direction === "E") pos.x += offset;
@@ -364,8 +367,8 @@ export default function App() {
         speed: 18,
         targetSpeed: 18,
         direction,
-        length: 17,
-        width: 10,
+        length: VEHICLE_LENGTH,
+        width: VEHICLE_WIDTH,
         localState: "moving",
         lastSeen: now,
         ghost: true,
